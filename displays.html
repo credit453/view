@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Page Views</title>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <h1>Page Views Count: <span id="viewCount">Loading...</span></h1>
+
+    <script>
+        // Your Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDjEMfv6ar0hEko5PntaaYqvKQsqg8MPYg",
+    authDomain: "display-2f1de.firebaseapp.com",
+    projectId: "display-2f1de",
+    storageBucket: "display-2f1de.appspot.com",
+    messagingSenderId: "275179222493",
+    appId: "1:275179222493:web:e16e7f09702073a51cb234"
+  };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const viewCountElement = document.getElementById('viewCount');
+        const pageViewsRef = db.collection('pageViews').doc('viewCount');
+
+        async function updateViewCount() {
+            try {
+                const doc = await pageViewsRef.get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    let count = data.count || 0;
+                    count++;
+                    await pageViewsRef.update({ count });
+                    viewCountElement.textContent = count;
+                } else {
+                    await pageViewsRef.set({ count: 1 });
+                    viewCountElement.textContent = 1;
+                }
+            } catch (error) {
+                console.error("Error updating view count:", error);
+            }
+        }
+
+        updateViewCount();
+    </script>
+</body>
+</html>
+
